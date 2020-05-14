@@ -5,7 +5,7 @@ import timeit
 def dfCreate():
     dataFrame = pd.read_csv("household_power_consumption.txt", parse_dates={"DateTime": [0, 1]}, sep=";",
                             header=1, na_values=["?"]).dropna()
-    dataFrame.columns = ["DateTime", "GAP", "GRP", "Voltage", "GI", "met1", "met2", "met3"]
+    dataFrame.columns = ["DateTime", "GAP", "GRP", "Voltage", "GI", "sub1", "sub2", "sub3"]
 
     return dataFrame
 
@@ -34,7 +34,7 @@ def overAmperage(df):
     start = timeit.default_timer()
 
     amperagedf = df.loc[((df["GAP"] * 1000) / df["Voltage"] > 19) & ((df["GAP"] * 1000) / df["Voltage"] < 20) &
-                        (df["met2"] > df["met3"])].reset_index().drop("index", axis=1)
+                        (df["sub2"] > df["sub3"])].reset_index().drop("index", axis=1)
 
     print(amperagedf)
 
@@ -47,8 +47,8 @@ def randomMean(df):
     sampledf = df.sample(500000).reset_index().drop("index", axis=1)
 
     print("Average for kitchen = {}".format(sampledf["met"].mean()))
-    print("Average for bathroom = {}".format(sampledf["met2"].mean()))
-    print("Average for room = {}".format(sampledf["met3"].mean()))
+    print("Average for bathroom = {}".format(sampledf["sub2"].mean()))
+    print("Average for room = {}".format(sampledf["sub3"].mean()))
 
     print("The execution time = {} seconds".format(timeit.default_timer() - start))
 
@@ -63,7 +63,7 @@ def timeMean(df):
     print(firstPart)
     print("----------------------")
 
-    secondPart = df.loc[(df["met2"] > df["met1"]) & (df["met2"] > df["met3"])].reset_index().drop("index", axis=1)
+    secondPart = df.loc[(df["sub2"] > df["sub1"]) & (df["sub2"] > df["sub3"])].reset_index().drop("index", axis=1)
     print(secondPart)
     print("----------------------")
     firstPart = secondPart[::4, :]
