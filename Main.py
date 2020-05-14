@@ -1,18 +1,43 @@
 import pandas as pd
 import numpy as np
-import timeit
 import Array
 import DataFrame
 
-pd.options.display.max_columns = 9
-pd.options.display.max_rows = 500
-
-np.set_printoptions(edgeitems=10)
-
 DF = DataFrame.dfCreate()
+ARR = Array.arrCreate(DF)
 
-# ARR = Array.arrCreate()
+struct = {"a": Array, "d": DataFrame}
 
+arrFunc = {"1": Array.overPower, "2": Array.overVoltage, "3": Array.overAmperage,
+           "4": Array.randomMean, "5": Array.timeMean}
+
+dfFunc = {"1": DataFrame.overPower, "2": DataFrame.overVoltage, "3": DataFrame.overAmperage,
+           "4": DataFrame.randomMean, "5": DataFrame.timeMean}
+
+def funcCall(choice1, choice2):
+    if (choice1 == "a"):
+        arrFunc[choice2](ARR)
+
+    if (choice1 == "d"):
+        dfFunc[choice2](DF)
+
+while(True):
+    print("Array (a) or DataFrame (d)?")
+
+    choice1 = input()
+
+    print("1. overPower")
+    print("2. overVoltage")
+    print("3. overAmperage")
+    print("4. randomMean")
+    print("5. timeMean")
+
+    choice2 = input()
+
+    funcCall(choice1, choice2)
+#
+#
+#
 # while(True):
 #     print("Array or DataFrame?")
 #     choice = input()
@@ -67,6 +92,6 @@ DF = DataFrame.dfCreate()
 #
 #         if (choice == "6"):
 #             DataFrame.periodCombination(DF)
-
-
-DataFrame.periodCombination(DF)
+#
+#
+# DataFrame.periodCombination(DF)

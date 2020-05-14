@@ -1,69 +1,56 @@
 import numpy as np
 import pandas as pd
-from datetime import datetime
+import timeit
 
-def arrCreate():
-    source = np.genfromtxt("household_power_consumption.txt", delimiter=";", skip_header=1, skip_footer=2075000,
-                          names=["Date", "Time", "GAP", "GRP", "Voltage", "GI", "met1", "met2", "met3"],
-                          dtype=["U19", "U8", "float32", "float32", "float32", "float32", "float32", "float32", "float32"])
 
-    raws = []
-
-    for i in source:
-        datetime = pd.to_datetime(i[0] + ' ' + i[1])
-
-        raw = [datetime, i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
-
-        if(np.isnan(i[3]) | np.isnan(i[4]) | np.isnan(i[5]) | np.isnan(i[6]) | np.isnan(i[7]) | np.isnan(i[8])):
-            continue
-
-        raws.append(raw)
-
-    arr = np.array(raws)
+def arrCreate(DF):
+    arr = np.array(DF)
 
     return arr
 
+
 def overPower(arr):
-    start_time = datetime.now()
+    start = timeit.default_timer()
 
-    powerArr = arr[(arr[:, 1] + arr[:, 2]) > 5.0]
+    powerArr = arr[(arr[:, 1]) > 5.0]
 
-    end_time = datetime.now()
+    print("Count of raws = {}".format(powerArr.shape[0]))
 
-    print("DateTime GAP GRP Voltage GI met1 met2 met3")
+    print("DateTime GAP GRP Voltage GI sub1 sub2 sub3")
     print(powerArr)
+    print("Count of raws = {}".format(powerArr.shape[0]))
 
-    print("The execution time = {}".format(end_time - start_time))
+    print("Tte execution time = {} seconds".format(timeit.default_timer() - start))
+
 
 def overVoltage(arr):
-    start_time = datetime.now()
+    start = timeit.default_timer()
 
     voltageArr = arr[arr[:, 3] > 235.0]
 
-    end_time = datetime.now()
-
-    print("DateTime GAP GRP Voltage GI met1 met2 met3")
+    print("DateTime GAP GRP Voltage GI sub1 sub2 sub3")
     print(voltageArr)
+    print("Count of raws = {}".format(voltageArr.shape[0]))
 
-    print("The execution time = {}".format(end_time - start_time))
+    print("Tte execution time = {} seconds".format(timeit.default_timer() - start))
+
 
 def overAmperage(arr):
-    start_time = datetime.now()
+    start = timeit.default_timer()
 
-    amperageArr = arr[(((arr[:, 1] + arr[:, 2])*1000)/arr[:, 3] > 19) & (((arr[:, 1] + arr[:, 2])*1000)/arr[:, 3] < 20)]
+    amperageArr = arr[(((arr[:, 1]) * 1000) / arr[:, 3] > 19) & (((arr[:, 1]) * 1000) / arr[:, 3] < 20)]
 
-    end_time = datetime.now()
-
-    print("DateTime GAP GRP Voltage GI met1 met2 met3")
+    print("DateTime GAP GRP Voltage GI sub1 sub2 sub3")
     print(amperageArr)
-    print("The execution time = {}".format(end_time - start_time))
+    print("Count of raws = {}".format(amperageArr.shape[0]))
+
+    print("The execution time = {} seconds".format(timeit.default_timer() - start))
+
 
 def randomMean(arr):
-    start_time = datetime.now()
+    start = timeit.default_timer()
 
     idx = np.random.randint(np.size(arr, 0) - 1, size=500000)
-
-    end_time = datetime.now()
 
     randomArr = arr[idx, :]
 
@@ -71,23 +58,24 @@ def randomMean(arr):
     print("Average for bathroom = {}".format(randomArr[:, 6].mean()))
     print("Average for room = {}".format(randomArr[:, 7].mean()))
 
-    print("The execution time = {}".format(end_time - start_time))
+    print("The execution time = {} seconds".format(timeit.default_timer() - start))
+
 
 def timeMean(arr):
-    start_time = datetime.now()
+    start = timeit.default_timer()
 
-    temp = arr[(pd.to_datetime(arr[:, 0]).hour >= 18) & ((arr[:, 1] + arr[:, 2]) > 6)]
+    firstPart = arr[(pd.to_datetime(arr[:, 0]).hour >= 18) & (arr[:, 1] > 6)]
+    print(firstPart)
+    print("----------------------")
+    firstPart = firstPart[::3, :]
+    print(firstPart)
+    print("----------------------")
 
-    end_time = datetime.now()
+    secondPart = arr[(arr[:, 6] > arr[:, 5]) & (arr[:, 6] > arr[:, 7])]
+    print(secondPart)
+    print("----------------------")
+    secondPart = secondPart[::3, :]
+    print(secondPart)
+    print("----------------------")
 
-    timeArr = temp[(temp[:, 6] > temp[:, 5]) & (temp[:, 6] > temp[:, 7])]
-
-    print(timeArr)
-
-    print("The execution time = {}".format(end_time - start_time))
-
-# def periodCombination(arr):
-#     maxMetDat = arr[(pd.to_datetime(arr[:, 0]).year == 2007) & (pd.to_datetime(arr[:, 0]).month == 3) & (pd.to_datetime(arr[:, 0]).day == 22)]
-#
-#     print(df.loc[(df["DateTime"].dt.year == 2007) & (df["DateTime"].dt.month == 3) & (df["DateTime"].dt.day == 22)])
-#     print(maxMetDat)
+    print("The execution time = {} seconds".format(timeit.default_timer() - start))
