@@ -2,9 +2,14 @@ import pandas as pd
 import timeit
 
 
-def dfCreate():
-    dataFrame = pd.read_csv("household_power_consumption.txt", parse_dates={"DateTime": [0, 1]}, sep=";",
-                            header=1, na_values=["?"]).dropna()
+def dfCreate(n):
+    if (n != 0):
+        dataFrame = pd.read_csv("household_power_consumption.txt", parse_dates={"DateTime": [0, 1]}, sep=";",
+                                header=1, nrows=n, na_values=["?"]).dropna()
+    else:
+        dataFrame = pd.read_csv("household_power_consumption.txt", parse_dates={"DateTime": [0, 1]}, sep=";",
+                                header=1, na_values=["?"]).dropna()
+
     dataFrame.columns = ["DateTime", "GAP", "GRP", "Voltage", "GI", "sub1", "sub2", "sub3"]
 
     return dataFrame
