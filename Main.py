@@ -1,33 +1,33 @@
-import timeit
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import Array
 import DataFrame
 
-DF = DataFrame.dfCreate()
-ARR = Array.arrCreate(DF)
+# DF = DataFrame.dfCreate(0)
+# ARR = Array.arrCreate(DF)
 
 arrFunc = {"1": Array.overPower, "2": Array.overVoltage, "3": Array.overAmperage,
-           "4": Array.randomMean, "5": Array.timeMean}
+           "4": Array.timeMean, "5": Array.randomMean}
 
 dfFunc = {"1": DataFrame.overPower, "2": DataFrame.overVoltage, "3": DataFrame.overAmperage,
-          "4": DataFrame.randomMean, "5": DataFrame.timeMean}
+          "4": DataFrame.timeMean, "5": DataFrame.randomMean}
 
 
-def funcCall(choice1, choice2):
+def funcCall(choice1, choice2, arr, df):
     if (choice1 == "a"):
-        arrFunc[choice2](ARR)
+        arrFunc[choice2](arr)
 
     if (choice1 == "d"):
-        dfFunc[choice2](DF)
+        dfFunc[choice2](df)
 
 
-def getTime(choice1, choice2):
+def getTime(choice1, choice2, arr, df):
     if (choice1 == "a"):
-        time = arrFunc[choice2](ARR)
+        time = arrFunc[choice2](arr)
 
     if (choice1 == "d"):
-        time = dfFunc[choice2](DF)
+        time = dfFunc[choice2](df)
 
     return time
 
@@ -47,18 +47,44 @@ def getTime(choice1, choice2):
 #
 #     funcCall(choice1, choice2)
 
-arrTime = []
-dfTime = []
+arrOverPowerTime = []
+arrOverVoltageTime = []
+arrOverAmperageTime = []
+arrTimeMeanTime = []
 
-for i in range(1, 6):
-    time = getTime("a", "{}".format(i))
-    arrTime.append(time)
+dfOverPowerTime = []
+dfOverVoltageTime = []
+dfOverAmperageTime = []
+dfTimeMeanTime = []
 
-for i in range(1, 6):
-    time = getTime("d", "{}".format(i))
-    dfTime.append(time)
+Pandas = [arrOverPowerTime, arrOverVoltageTime, arrOverAmperageTime, arrTimeMeanTime]
+Numpy = [dfOverPowerTime, dfOverVoltageTime, dfOverAmperageTime, dfTimeMeanTime]
 
-Times = pd.DataFrame({"Array": arrTime, "DataFrame": dfTime,
-                      "Index": ["overPower", "overVoltage", "overAmperage", "randomMean", "timeMean"]}).set_index("Index")
+for i in range(1, 7):
+    df = DataFrame.dfCreate(pow(10, i))
+    arr = Array.arrCreate(df)
 
-print(Times)
+    for j in range(1, 5):
+        timea = getTime("a", "{}".format(j), arr, df)
+        print(timea)
+        Numpy[j - 1].append(timea)
+        timed = getTime("d", "{}".format(j), arr, df)
+        Pandas[j - 1].append(timed)
+
+count = ["10", "100", "1000", "10000", "100000", "1000000"]
+
+overPowerTable = pd.DataFrame({"Array": Numpy[0], "DataFrame": Pandas[0],
+            "Count": count}).set_index("Count")
+overVoltageTable = pd.DataFrame({"Array": Numpy[1], "DataFrame": Pandas[1],
+            "Count": count}).set_index("Count")
+overAmperageTable = pd.DataFrame({"Array": Numpy[2], "DataFrame": Pandas[2],
+            "Count": count}).set_index("Count")
+timeMeanTable = pd.DataFrame({"Array": Numpy[3], "DataFrame": Pandas[3],
+            "Count": count}).set_index("Count")
+
+overPowerPlot = overPowerTable.plot(title="Over Power", grid=True)
+overVoltagePlot = overVoltageTable.plot(title="Over Voltage", grid=True)
+overAmperagePlot = overAmperageTable.plot(title="Over Amperage", grid=True)
+timeMeanPlot = timeMeanTable.plot(title="Time Mean", grid=True)
+
+plt.show()
